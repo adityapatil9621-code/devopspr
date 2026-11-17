@@ -1,0 +1,29 @@
+---
+- name: Install and Configure Apache
+  hosts: webservers
+  become: yes
+
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+
+    - name: Install packages
+      apt:
+        name:
+          - apache2
+          - curl
+          - git
+          - vim
+        state: present
+
+    - name: Start Apache service
+      service:
+        name: apache2
+        state: started
+        enabled: yes
+
+    - name: Copy custom HTML file
+      copy:
+        content: "<h1>Apache Configured Using Ansible Successfully!</h1>"
+        dest: /var/www/html/index.html
