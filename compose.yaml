@@ -1,30 +1,25 @@
-
 services:
-  web:
-    build: .
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
     ports:
-      - "5001:5000"
-    environment:
-      DB_PASSWORD: ${DB_PASSWORD}
-    depends_on:
-      db:
-        condition: service_healthy
-
-  db:
-    image: mysql:8.4
-    environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_DATABASE: mydatabase
-      MYSQL_USER: appuser
-      MYSQL_PASSWORD: ${DB_PASSWORD}
+      - "9090:9090"
     volumes:
-      - mysql_data:/var/lib/mysql
-    healthcheck:
-      test: ["CMD-SHELL", "MYSQL_PWD=\"$MYSQL_ROOT_PASSWORD\" mysqladmin ping -h localhost --silent"]
-      interval: 10s
-      timeout: 5s
-      retries: 10
-      start_period: 30s
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+    restart: unless-stopped
 
-volumes:
-  mysql_data:
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: node-exporter
+    ports:
+      - "9100:9100"
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
