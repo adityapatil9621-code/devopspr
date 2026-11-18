@@ -23,7 +23,17 @@
         state: started
         enabled: yes
 
-    - name: Copy custom HTML file
+   - name: Copy custom index.html
       copy:
-        content: "<h1>Apache Configured Using Ansible Successfully!</h1>"
+        content: |
+          <html>
+          <head><title>Ansible Practical</title></head>
+          <body>
+          <h1>Apache Server Configured by Ansible</h1>
+          <p>Managed Node is Working Successfully!</p>
+          </body>
+          </html>
         dest: /var/www/html/index.html
+        owner: root
+        group: root
+        mode: '0644'
